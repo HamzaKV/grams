@@ -30,6 +30,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+tests/**/*
 
 # System Files
 .DS_Store

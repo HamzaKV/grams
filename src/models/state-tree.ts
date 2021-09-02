@@ -21,6 +21,9 @@ const tree = () => {
         searchTree(root)(key, ...props);
 
     const add = (key: string, gram: Gram<any>, ...props: string[]) => {
+        const value = gram?.effects?.onStart
+            ? gram.effects.onStart() ?? gram.defaultValue
+            : gram.defaultValue;
         if (props) {
             let node = search(key, ...props);
             if (node && !node?.children) {
@@ -30,7 +33,7 @@ const tree = () => {
                         ...node.children,
                         [props[props.length - 1]]: {
                             ...gram,
-                            value: gram.defaultValue,
+                            value: value,
                             key: props[props.length - 1],
                         },
                     },
@@ -41,7 +44,7 @@ const tree = () => {
         } else {
             root[key] = {
                 ...gram,
-                value: gram.defaultValue,
+                value: value,
                 key: key,
             };
         }

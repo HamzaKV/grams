@@ -21,6 +21,7 @@ export interface Gram<T> {
         [key: string]: (
             prev: Value<T>,
             newValue: Value<T>,
+            defaultValue?: Value<T>,
             get?: Getter<T>,
             set?: Setter
         ) => Value<T>;
@@ -33,18 +34,14 @@ export interface Gram<T> {
         ) => Value<T>;
     };
     effects?: {
-        onStart?: (
-            prev: Value<T>,
-            get?: Getter<T>,
-            set?: Setter
-        ) => Value<T> | void;
+        onStart?: () => Value<T> | void;
         onUpdate: (prev: Value<T>, get?: Getter<T>, set?: Setter) => void;
-        onExit?: (
-            prev: Value<T>,
-            get?: Getter<T>,
-            set?: Setter
-        ) => Value<T> | void;
-        onError?: (prev: Value<T>, get?: Getter<T>, set?: Setter) => void;
+        // onExit?: (
+        //     prev: Value<T>,
+        //     get?: Getter<T>,
+        //     set?: Setter
+        // ) => void;
+        // onError?: (prev: Value<T>, get?: Getter<T>, set?: Setter) => void;
     };
     proxy?: (prev: Value<T>, get?: Getter<T>, set?: Setter) => boolean | Error;
 }

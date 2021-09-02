@@ -17,7 +17,24 @@ const useSetStore = (
                     typeof value === 'function'
                         ? value(deepCopy(node?.value))
                         : value;
-                updateTree(store)(newValue, key, ...props);
+                let run = false;
+                if (node?.proxy) {
+                    try {
+                        node.proxy(newValue);
+                        run = true;
+                    } catch (err) {
+                        console.error(err);
+                        run = false;
+                        return;
+                    }
+                } else {
+                    run = true;
+                }
+                if (run) {
+                    if (node?.effects?.onUpdate)
+                        node.effects.onUpdate(node?.value);
+                    updateTree(store)(newValue, key, ...props);
+                }
             }
         }
 
@@ -31,8 +48,8 @@ const useSetStore = (
             for (const mapKey of mapKeys) {
                 const list = map.get(mapKey);
                 if (list) {
-                    for (const v of list) {
-                        v();
+                    for (const updater of list) {
+                        updater();
                     }
                 }
             }

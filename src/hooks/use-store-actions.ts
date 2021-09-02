@@ -12,11 +12,13 @@ const useStoreActions = (
     const value = useStoreValue(key, ...props);
     const setState = useSetStore(key, ...props);
 
-    const actions = store ? searchTree(store)(key, ...props)?.actions : null;
+    const node = store ? searchTree(store)(key, ...props) : null;
+    const actions = node ? node.actions : null;
+    const defaultValue = node ? node.defaultValue : null;
 
     const action = (newValue: any) => {
         if (actions) {
-            setState(actions[actionName](value, newValue));
+            setState(actions[actionName](value, newValue, defaultValue));
         }
     };
 

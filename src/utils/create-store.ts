@@ -4,15 +4,14 @@ import { Gram } from '../types/gram';
 import globalStore from '../models/global-store';
 import Observable from '../models/observable';
 
-const createStore = (grams: {
-    [key: string]: Gram<any>;
-}): { store: Tree<any>; map: Map } => {
+const createStore = (
+    grams: {
+        [key: string]: Gram<any>;
+    },
+    createGlobal?: boolean
+): { store: Tree<any>; map: Map } => {
     const tree = StateTree();
     const map = StateMap();
-
-    const store = <typeof tree.root>Observable(tree.root, (_, newValue) => {
-        globalStore.setStore(newValue);
-    });
 
     const make = (models: any, accKey: string) => {
         for (const key in models) {
@@ -21,7 +20,7 @@ const createStore = (grams: {
 
             tree.add(key, gram, ...props);
             map.add(accKey ? `${accKey}:${key}` : key, []);
-    
+
             if (gram.type === 'granular') {
                 make(gram, accKey ? `${accKey}:${key}:prop:` : `${key}:prop:`);
             }
@@ -29,6 +28,12 @@ const createStore = (grams: {
     };
 
     make(grams, '');
+
+    const store = createGlobal
+        ? <typeof tree.root>Observable(tree.root, (_, newValue) => {
+            globalStore.setStore(newValue);
+        })
+        : tree.root;
 
     // for (const key in grams) {
     //     const gram = grams[key];
@@ -49,7 +54,7 @@ const createStore = (grams: {
 
     return {
         store: store,
-        map: map.stateMap
+        map: map.stateMap,
     };
 };
 

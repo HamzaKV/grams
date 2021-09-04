@@ -7,10 +7,11 @@ interface IProps {
     models: {
         [key: string]: Gram<any>;
     };
+    allowGlobal?: boolean;
 }
 
-const Provider: FC<IProps> = ({ models, children }) => {
-    const { store, map } = createStore(models);
+const Provider: FC<IProps> = ({ models, children, allowGlobal }) => {
+    const { store, map } = createStore(models, allowGlobal);
     const storeRef = useRef(store);
     const mapRef = useRef(map);
 

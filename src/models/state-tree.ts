@@ -17,14 +17,14 @@ export interface Tree<T> {
 const tree = () => {
     const root: Tree<any> = {};
 
-    const search = (key: string, ...props: string[]) =>
+    const search = (key: string, ...props: string[]) => 
         searchTree(root)(key, ...props);
 
     const add = (key: string, gram: Gram<any>, ...props: string[]) => {
         const value = gram?.effects?.onStart
             ? gram.effects.onStart() ?? gram.defaultValue
             : gram.defaultValue;
-        if (props) {
+        if (props && props.length > 0) {
             let node = search(key, ...props);
             if (node && !node?.children) {
                 node = {
@@ -51,7 +51,7 @@ const tree = () => {
     };
 
     const prune = (key: string, ...props: string[]) => {
-        if (props) {
+        if (props && props.length > 0) {
             const node = search(key, ...props);
             if (node && !node?.children) {
                 delete node.children;
@@ -63,7 +63,7 @@ const tree = () => {
         }
     };
 
-    const update = (value: any, key: string, ...props: string[]) =>
+    const update = (value: any, key: string, ...props: string[]) => 
         updateTree(root)(value, key, ...props);
 
     return {

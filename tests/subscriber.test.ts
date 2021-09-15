@@ -1,6 +1,5 @@
 import subscriber from '../src/models/subscriber';
 
-// eslint-disable-next-line no-undef
 describe('Subscriber', () => {
     const key = 'bar';
     const id = 1;

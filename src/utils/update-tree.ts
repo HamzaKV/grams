@@ -1,9 +1,11 @@
 import { Tree } from '../models/state-tree';
 
+
+// TODO: needs to be fixed
 const update =
     (tree: Tree<any>) =>
         (value: any, key: string, ...props: string[]): void => {
-            if (props) {
+            if (props && props.length > 0) {
                 let node = tree[key];
 
                 let currentValue = node.value;
@@ -24,7 +26,7 @@ const update =
                     }
                 }
             } else {
-                tree[key] = value;
+                tree[key].value = value;
             }
         };
 

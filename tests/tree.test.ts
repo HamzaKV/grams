@@ -8,10 +8,10 @@ describe('State Tree', () => {
     const defaultValue = 'value';
     const newValue = 'newValue';
     const actions = {
-        sum: (v, nV) => 'bar'
+        sum: () => 'bar'
     };
     const produce = {
-        foo: (v) => 'hi'
+        foo: () => 'hi'
     };
     const effects = {
         onUpdate: () => 1,
@@ -31,5 +31,25 @@ describe('State Tree', () => {
         tree.update(newValue, key);
         const result = tree.search(key);
         expect(result.value).toBe(newValue);
+    });
+
+    it('should return action sum', () => {
+        const result = tree.search(key);
+        expect(result.actions.sum()).toBe(actions.sum());
+    });
+
+    it('should return produce foo', () => {
+        const result = tree.search(key);
+        expect(result.produce.foo()).toBe(produce.foo());
+    });
+
+    it('should return effect onUpdate', () => {
+        const result = tree.search(key);
+        expect(result.effects.onUpdate()).toBe(effects.onUpdate());
+    });
+
+    it('should return proxy', () => {
+        const result = tree.search(key);
+        expect(result.proxy()).toBe(proxy());
     });
 });

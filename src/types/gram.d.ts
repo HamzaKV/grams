@@ -19,8 +19,8 @@ export interface Gram<T> {
     stateType: 'state' | 'cache';
     actions?: {
         [key: string]: (
-            prev: Value<T>,
-            newValue: Value<T>,
+            prev?: Value<T>,
+            newValue?: Value<T>,
             defaultValue?: Value<T>,
             get?: Getter<T>,
             set?: Setter
@@ -28,14 +28,14 @@ export interface Gram<T> {
     };
     produce?: {
         [key: string]: (
-            value: Value<T>,
+            value?: Value<T>,
             get?: Getter<T>,
             set?: Setter
         ) => Value<T>;
     };
     effects?: {
         onStart?: () => Value<T> | void;
-        onUpdate: (prev: Value<T>, get?: Getter<T>, set?: Setter) => void;
+        onUpdate: (prev?: Value<T>, get?: Getter<T>, set?: Setter) => void;
         // onExit?: (
         //     prev: Value<T>,
         //     get?: Getter<T>,
@@ -43,5 +43,5 @@ export interface Gram<T> {
         // ) => void;
         // onError?: (prev: Value<T>, get?: Getter<T>, set?: Setter) => void;
     };
-    proxy?: (prev: Value<T>, get?: Getter<T>, set?: Setter) => boolean | Error;
+    proxy?: (prev?: Value<T>, get?: Getter<T>, set?: Setter) => boolean | Error;
 }

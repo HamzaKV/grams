@@ -8,7 +8,7 @@ const useStoreValue = (key: string, ...props: string[]): any => {
 
     const mapKey = props ? key + ':prop:' + props.join(':prop:') : key;
 
-    const [_, updateState] = useState(1);
+    const [, updateState] = useState(1);
 
     const forceUpdate = () => {
         updateState((prev) => (prev === 0 ? 1 : 0));

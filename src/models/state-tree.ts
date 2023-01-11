@@ -25,22 +25,26 @@ const tree = () => {
             ? gram.effects.onStart() ?? gram.defaultValue
             : gram.defaultValue;
         if (props && props.length > 0) {
-            let node = search(key, ...props);
-            if (node && !node?.children) {
-                node = {
-                    ...node,
-                    children: {
-                        ...node.children,
-                        [props[props.length - 1]]: {
-                            ...gram,
-                            value: value,
-                            key: props[props.length - 1],
-                        },
-                    },
-                };
-            } else {
-                throw new Error('Invalid property');
-            }
+            const propKey = props.splice(props.length - 1, 1)[0];
+            
+            // let node = search(key, ...props);
+            // if (node && !node?.children) {
+
+            //     //update node in tree
+            //     node = {
+            //         ...node,
+            //         children: {
+            //             ...node.children,
+            //             [propKey]: {
+            //                 ...gram,
+            //                 value: value,
+            //                 key: propKey,
+            //             },
+            //         },
+            //     };
+            // } else {
+            //     throw new Error('Invalid property');
+            // }
         } else {
             root[key] = {
                 ...gram,

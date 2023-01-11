@@ -7,9 +7,9 @@ const search =
 
             if (props && props.length > 0) {
                 let tmp: any;
-                for (const _ of props.slice(0, -1)) {
+                props.forEach(() => {
                     tmp = current?.children;
-                }
+                });
                 current = tmp[props.length - 1];
             }
 

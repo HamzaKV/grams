@@ -3,26 +3,43 @@ import StateMap, { StateMap as Map } from '../models/state-map';
 import { Gram } from '../types/gram';
 import globalStore from '../models/global-store';
 import Observable from '../models/observable';
+import { default as newGram } from '../models/gram';
+
+type GramModels = {
+    [key: string]: Gram<any>;
+};
 
 const createStore = (
-    grams: {
-        [key: string]: Gram<any>;
-    },
+    grams: GramModels,
     createGlobal?: boolean
 ): { store: Tree<any>; map: Map } => {
     const tree = StateTree();
     const map = StateMap();
 
-    const make = (models: any, accKey: string) => {
+    const make = (models: GramModels, accKey: string) => {
         for (const key in models) {
             const gram = models[key];
-            const props = accKey.split(':prop:');
-
-            tree.add(key, gram, ...props);
+            const props = `${accKey}${key}`
+                .split(':prop:')
+                .filter((item) => !!item);
+            const treeKey = accKey ? props[0] : key;
+            props.splice(0, 1);
+            tree.add(
+                treeKey,
+                gram,
+                ...(props && props.length > 0 ? props : [])
+            );
             map.add(accKey ? `${accKey}:${key}` : key, []);
 
             if (gram.type === 'granular') {
-                make(gram, accKey ? `${accKey}:${key}:prop:` : `${key}:prop:`);
+                const gramModels: GramModels = {};
+                for (const gramKey in gram.defaultValue) {
+                    gramModels[gramKey] = newGram(gram.defaultValue[gramKey]);
+                }
+                make(
+                    gramModels,
+                    accKey ? `${accKey}${key}:prop:` : `${key}:prop:`
+                );
             }
         }
     };
@@ -30,27 +47,13 @@ const createStore = (
     make(grams, '');
 
     const store = createGlobal
-        ? <typeof tree.root>Observable(tree.root, (_, newValue) => {
-            globalStore.setStore(newValue);
-        })
+        ? <typeof tree.root>Observable(
+            tree.root, (_, newValue) => {
+                globalStore.setStore(newValue);
+            })
         : tree.root;
 
-    // for (const key in grams) {
-    //     const gram = grams[key];
-
-    //     if (gram.type === 'granular') {
-    //         store.add(key, gram);
-    //         map.add(key, []);
-    //         for (const childKey in gram.defaultValue) {
-    //             const childGram = gram.defaultValue[childKey];
-    //             store.add(key, childGram, childKey);
-    //             map.add(`${key}:prop:${childKey}`, []);
-    //         }
-    //     } else {
-    //         store.add(key, gram);
-    //         map.add(key, []);
-    //     }
-    // }
+    console.log(store);
 
     return {
         store: store,

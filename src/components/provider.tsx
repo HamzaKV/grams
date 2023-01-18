@@ -1,23 +1,21 @@
 import { useRef, FC } from 'react';
 import AppContext from './context';
 import createStore from '../utils/create-store';
-import { Gram } from '../types/gram';
+import type { GramModels } from '../types/gram';
 
 interface IProps {
-    models: {
-        [key: string]: Gram<any>;
-    };
-    allowGlobal?: boolean;
+    models: GramModels;
 }
 
-const Provider: FC<IProps> = ({ models, children, allowGlobal }) => {
-    const { store, map } = createStore(models, allowGlobal);
-    const storeRef = useRef(store);
-    const mapRef = useRef(map);
+const Provider: FC<IProps> = ({ models, children }) => {
+    const { stateMap } = createStore(models);
+    // using a ref to ensure the entire component is not re-rendered when any part of the state changes. 
+    // Component(s) should only be re-rendered when signaled to.
+    const mapRef = useRef(stateMap);
 
     return (
         <AppContext.Provider
-            value={{ store: storeRef.current, map: mapRef.current }}
+            value={{ map: mapRef.current }}
         >
             {children}
         </AppContext.Provider>

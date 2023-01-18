@@ -3,33 +3,33 @@ import gram from '../src/models/gram';
 describe('Create gram', () => {
     const defaultValue = 'value';
     const actions = {
-        sum: (v, nV) => 'bar'
+        bar: () => 'bar'
     };
     const produce = {
-        foo: (v) => 'hi'
+        foo: () => 'hi',
     };
     const effects = {
         onUpdate: () => 1,
     };
-    const type = typeof defaultValue;
-    const stateType = 'state';
-    const proxy = () => false;
-    const g = gram(defaultValue, actions, produce, effects, type, stateType, proxy);
+    const type = 'string';
+    const stateType = 'stateful';
+    const middleware = [() => false];
+    const g = gram(defaultValue, type, stateType, produce, actions, effects, middleware);
 
     it('should return the default value', () => {
         expect(g.defaultValue).toBe(defaultValue);
     });
 
     it('should return the actions sum value', () => {
-        expect(g.actions.sum('', '')).toBe(actions.sum('', ''));
+        expect(g.actions.bar()).toBe(actions.bar());
     });
 
     it('should return the produce foo value', () => {
-        expect(g.produce.foo('')).toBe(produce.foo(''));
+        expect(g.produce.foo()).toBe(produce.foo());
     });
 
     it('should return the onUpdate effect', () => {
-        expect(g.effects.onUpdate('')).toBe(effects.onUpdate());
+        expect(g.effects.onUpdate()).toBe(effects.onUpdate());
     });
 
     it('should return the typeof defaultValue', () => {
@@ -41,6 +41,6 @@ describe('Create gram', () => {
     });
 
     it('should return the proxy value', () => {
-        expect(g.proxy('')).toBe(proxy());
+        expect(g.middleware[0]()).toBe(middleware[0]());
     });
 });

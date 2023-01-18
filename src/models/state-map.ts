@@ -1,20 +1,37 @@
+import type { GramNode } from '../types/gram';
 
-export type StateMap = Map<string, any[]>;
+export type StateMap = {
+    get: (key: string) => GramNode<unknown> | undefined;
+    add: (key: string, value: GramNode<unknown>) => void;
+    remove: (key: string) => void;
+    keys: () => string[];
+    entries: () => [key: string, value: GramNode<unknown>][];
+    has: (key: string) => boolean;
+};
 
-const map = () => {
-    const stateMap: StateMap = new Map();
+const map = (): StateMap => {
+    const stateMap = new Map<string, GramNode<unknown>>();
 
-    const get = (key: string) => (stateMap.has(key) ? stateMap.get(key) : []);
+    const get = (key: string) => stateMap.get(key);
 
-    const add = (key: string, value: any[]) => stateMap.set(key, value);
+    const add = (key: string, value: GramNode<unknown>) => 
+        stateMap.set(key, value);
 
     const remove = (key: string) => stateMap.delete(key);
+
+    const keys = () => [...stateMap.keys()];
+
+    const entries = () => [...stateMap.entries()];
+
+    const has = (key: string) => stateMap.has(key);
 
     return {
         get,
         add,
         remove,
-        stateMap
+        keys,
+        entries,
+        has,
     };
 };
 

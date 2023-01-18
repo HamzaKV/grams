@@ -1,17 +1,13 @@
-import useContext from './use-context';
-import useStoreValue from './use-store-value';
-import searchTree from '../utils/search-tree';
+import useStoreNode from './use-store-node';
 
 const useStoreProduce = (
     produceName: string,
     key: string,
     ...props: string[]
-): any => {
-    const { store } = useContext();
-    const value = useStoreValue(key, ...props);
-    const produce = store ? searchTree(store)(key, ...props)?.produce : null;
+): unknown => {
+    const node = useStoreNode(key, ...props);
 
-    return produce ? produce[produceName](value) : null;
+    return node ? node.produce?.[produceName] : null;
 };
 
 export default useStoreProduce;

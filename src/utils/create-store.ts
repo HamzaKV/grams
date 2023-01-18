@@ -1,44 +1,50 @@
-import StateTree, { Tree } from '../models/state-tree';
-import StateMap, { StateMap as Map } from '../models/state-map';
-import { Gram } from '../types/gram';
-import globalStore from '../models/global-store';
-import Observable from '../models/observable';
-import { default as newGram } from '../models/gram';
-
-type GramModels = {
-    [key: string]: Gram<any>;
-};
+import type { GramModels, GramNode , GramTypes} from '../types/gram';
+import StateMap from '../models/state-map';
+import type { StateMap as Map } from '../models/state-map';
+import newGram from '../models/gram';
+import { supportedTypes, propDenote } from '../constants/strings';
+import { getter, setter } from './state-fns';
 
 const createStore = (
-    grams: GramModels,
-    createGlobal?: boolean
-): { store: Tree<any>; map: Map } => {
-    const tree = StateTree();
+    grams: GramModels
+): { stateMap: Map; }  => {
     const map = StateMap();
+    let rootGramType = '';
 
     const make = (models: GramModels, accKey: string) => {
         for (const key in models) {
+            // TODO add support for nested grams 
             const gram = models[key];
-            const props = `${accKey}${key}`
-                .split(':prop:')
-                .filter((item) => !!item);
-            const treeKey = accKey ? props[0] : key;
-            props.splice(0, 1);
-            tree.add(
-                treeKey,
-                gram,
-                ...(props && props.length > 0 ? props : [])
-            );
-            map.add(accKey ? `${accKey}:${key}` : key, []);
-
-            if (gram.type === 'granular') {
+            if (accKey === '') {
+                rootGramType = gram.type;
+            }
+            const defaultValue = gram.defaultValue ?? null;
+            const gramNode: GramNode<unknown> = {
+                defaultValue: Object.freeze(defaultValue),
+                value: gram.defaultValue,
+                subscribers: [],
+                type: Object.freeze(gram.type),
+                stateType: Object.freeze(gram.stateType),
+                actions: Object.freeze(gram.actions),
+                produce: Object.freeze(gram.produce),
+                effects: Object.freeze(gram.effects),
+                middleware: gram.middleware,
+            };
+            map.add(accKey ? accKey + key : key, Object.seal(gramNode));
+            if (rootGramType === supportedTypes.granular) {
+                if (typeof gram.defaultValue !== 'object')
+                    throw new Error('granular can only be type object');
                 const gramModels: GramModels = {};
                 for (const gramKey in gram.defaultValue) {
-                    gramModels[gramKey] = newGram(gram.defaultValue[gramKey]);
+                    gramModels[gramKey] = gram.defaultValue[gramKey].type 
+                        ? gram.defaultValue[gramKey] : newGram(
+                            gram.defaultValue[gramKey],
+                            typeof gram.defaultValue[gramKey] as GramTypes
+                        );
                 }
                 make(
                     gramModels,
-                    accKey ? `${accKey}${key}:prop:` : `${key}:prop:`
+                    accKey ? accKey + key + propDenote : key + propDenote
                 );
             }
         }
@@ -46,19 +52,48 @@ const createStore = (
 
     make(grams, '');
 
-    const store = createGlobal
-        ? <typeof tree.root>Observable(
-            tree.root, (_, newValue) => {
-                globalStore.setStore(newValue);
-            })
-        : tree.root;
+    const keys = map.keys();
 
-    console.log(store);
+    for (const key of keys) {
+        const gramNode = map.get(key);
+        if (gramNode?.effects?.onMount) {
+            const prev = gramNode.value;
+            try {
+                const result = gramNode.effects.onMount(
+                    prev, 
+                    getter(map), 
+                    setter(map)
+                );
+                if (result) {
+                    if (result instanceof Promise) {
+                        result
+                            .then((value) => setter(map)(value, key))
+                            .catch(err => {
+                                if (gramNode?.effects?.onError) 
+                                    gramNode.effects.onError(
+                                        err, 
+                                        prev, 
+                                        getter(map), 
+                                        setter(map)
+                                    );
+                            });
+                    } else {
+                        setter(map)(result, key);
+                    }
+                }
+            } catch (err) {
+                if (gramNode.effects.onError) 
+                    gramNode.effects.onError(
+                        err, 
+                        prev, 
+                        getter(map), 
+                        setter(map)
+                    );
+            }
+        }
+    }
 
-    return {
-        store: store,
-        map: map.stateMap,
-    };
+    return { stateMap: map };
 };
 
 export default createStore;

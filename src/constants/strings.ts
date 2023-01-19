@@ -4,7 +4,7 @@ export const supportedTypes = {
     number: 'number',
     boolean: 'boolean',
     object: 'object',
-    granular: 'granular',
+    // granular: 'granular',
 } as const;
 
 export const supportedStateTypes = {

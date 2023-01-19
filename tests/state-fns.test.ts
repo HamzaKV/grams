@@ -13,7 +13,9 @@ describe('Testing getter and setter fns', () => {
         foo: () => 'hi',
     };
     const effects = {
-        onMount: () => '1',
+        onMount: () => {
+            //
+        },
     };
     const type = 'string';
     const stateType = 'stateful';

@@ -1,23 +1,16 @@
-import type { GramModels, GramNode , GramTypes} from '../types/gram';
+import type { GramModels, GramNode} from '../types/gram';
 import StateMap from '../models/state-map';
 import type { StateMap as Map } from '../models/state-map';
-import newGram from '../models/gram';
-import { supportedTypes, propDenote } from '../constants/strings';
 import { getter, setter } from './state-fns';
 
 const createStore = (
     grams: GramModels
 ): { stateMap: Map; }  => {
     const map = StateMap();
-    let rootGramType = '';
 
     const make = (models: GramModels, accKey: string) => {
         for (const key in models) {
-            // TODO add support for nested grams 
             const gram = models[key];
-            if (accKey === '') {
-                rootGramType = gram.type;
-            }
             const defaultValue = gram.defaultValue ?? null;
             const gramNode: GramNode<unknown> = {
                 defaultValue: Object.freeze(defaultValue),
@@ -31,22 +24,22 @@ const createStore = (
                 middleware: gram.middleware,
             };
             map.add(accKey ? accKey + key : key, Object.seal(gramNode));
-            if (rootGramType === supportedTypes.granular) {
-                if (typeof gram.defaultValue !== 'object')
-                    throw new Error('granular can only be type object');
-                const gramModels: GramModels = {};
-                for (const gramKey in gram.defaultValue) {
-                    gramModels[gramKey] = gram.defaultValue[gramKey].type 
-                        ? gram.defaultValue[gramKey] : newGram(
-                            gram.defaultValue[gramKey],
-                            typeof gram.defaultValue[gramKey] as GramTypes
-                        );
-                }
-                make(
-                    gramModels,
-                    accKey ? accKey + key + propDenote : key + propDenote
-                );
-            }
+            // if (rootGramType === supportedTypes.granular) {
+            //     if (typeof gram.defaultValue !== 'object')
+            //         throw new Error('granular can only be type object');
+            //     const gramModels: GramModels = {};
+            //     for (const gramKey in gram.defaultValue) {
+            //         gramModels[gramKey] = gram.defaultValue[gramKey].type 
+            //             ? gram.defaultValue[gramKey] : newGram(
+            //                 gram.defaultValue[gramKey],
+            //                 typeof gram.defaultValue[gramKey] as GramTypes
+            //             );
+            //     }
+            //     make(
+            //         gramModels,
+            //         accKey ? accKey + key + propDenote : key + propDenote
+            //     );
+            // }
         }
     };
 

@@ -2,84 +2,51 @@ import gram from '../src/models/gram';
 import createStore from '../src/utils/create-store';
 
 describe('Create a store', () => {
-    const defaultValue1 = 'value';
-    const actions1 = {
-        sum: (v, nV) => 'bar'
+    const gramKey = 'g';
+    const defaultValue = 'value';
+    const actions = {
+        bar: () => 'bar'
     };
-    const produce1 = {
-        foo: (v) => 'hi'
+    const produce = {
+        foo: () => 'hi',
     };
-    const effects1 = {
-        onUpdate: () => 1,
+    const effects = {
+        onMount: () => '1',
     };
-    const type1 = typeof defaultValue1;
-    const stateType1 = 'state';
-    const proxy1 = () => false;
-    const g1 = gram(defaultValue1, actions1, produce1, effects1, type1, stateType1, proxy1);
+    effects.onMount = jest.fn();
+    const type = 'string';
+    const stateType = 'stateful';
+    const middleware = [() => false];
+    const g = gram(defaultValue, type, stateType, produce, actions, effects, middleware);
+    const store = createStore({ [gramKey]: g });
 
-    const defaultValue2 = {
-        foo: 'bar'
-    };
-    const actions2 = {
-        sum: (v, nV) => ({
-            foo: 'foo'
-        })
-    };
-    const produce2 = {
-        foo: (v) => ({
-            foo: 'hi'
-        })
-    };
-    const effects2 = {
-        onUpdate: () => 1,
-    };
-    const type2 = typeof defaultValue2;
-    const stateType2 = 'state';
-    const proxy2 = () => false;
-    const g2 = gram(defaultValue2, actions2, produce2, effects2, type2, stateType2, proxy2);
+    const map = store.stateMap;
 
-    const defaultValue3 = {
-        foo: 'bar'
-    };
-    const actions3 = {
-        sum: (v, nV) => ({
-            foo: 'foo'
-        })
-    };
-    const produce3 = {
-        foo: (v) => ({
-            foo: 'hi'
-        })
-    };
-    const effects3 = {
-        onUpdate: () => 1,
-    };
-    const type3 = 'granular';
-    const stateType3 = 'state';
-    const proxy3 = () => false;
-    const g3 = gram(defaultValue3, actions3, produce3, effects3, type3, stateType3, proxy3);
-
-    const models = {
-        modelA: g1,
-        modelB: g2,
-        modelC: g3,
-    };
-
-    const { store, map } = createStore(models);
-
-    it('Should return the value', () => {
-        expect(store.modelA.value).toBe(defaultValue1);
+    it('store should have the key', () => {
+        expect(map.has(gramKey)).toBe(true);
     });
 
-    it('Should return the map for value', () => {
-        expect(map.has('modelA')).toBe(true);
+    it('it should have the value', () => {
+        expect(map.get(gramKey)?.value).toBe(defaultValue);
     });
 
-    it('Should return second value', () => {
-        expect(store.modelB.value.foo).toBe(defaultValue2.foo);
+    it('it should have the type', () => {
+        expect(map.get(gramKey)?.type).toBe(type);
     });
 
-    it('Should return the map for second value', () => {
-        expect(map.has('modelB')).toBe(true);
+    it('it should have the stateType', () => {
+        expect(map.get(gramKey)?.stateType).toBe(stateType);
+    });
+
+    it('it should give correct produce', () => {
+        expect(map.get(gramKey)?.produce.foo()).toBe(produce.foo());
+    });
+
+    it('it should give correct action', () => {
+        expect(map.get(gramKey)?.actions.bar()).toBe(actions.bar());
+    });
+
+    it('it should give correct effect', () => {
+        expect(effects.onMount).toHaveBeenCalledTimes(1);
     });
 });

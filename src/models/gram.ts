@@ -1,21 +1,22 @@
-import { Gram as GramType } from '../types/gram';
+import type { Gram as GramType } from '../types/gram';
+import { supportedStateTypes } from '../constants/strings';
 
 const gram = <T>(
     defaultValue: GramType<T>['defaultValue'],
-    actions?: GramType<T>['actions'],
-    produce?: GramType<T>['produce'],
-    effects?: GramType<T>['effects'],
-    type?: GramType<T>['type'],
+    type: GramType<T>['type'],
     stateType?: GramType<T>['stateType'],
-    proxy?: GramType<T>['proxy']
+    produce?: GramType<T>['produce'],
+    actions?: GramType<T>['actions'],
+    effects?: GramType<T>['effects'],
+    middleware?: GramType<T>['middleware']
 ): GramType<T> => ({
         defaultValue,
-        actions,
+        type: type,
+        stateType: stateType ?? supportedStateTypes.stateful,
         produce,
+        actions,
         effects,
-        type: type ?? typeof defaultValue,
-        stateType: stateType ?? 'state',
-        proxy,
+        middleware,
     });
 
 export default gram;

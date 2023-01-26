@@ -17,8 +17,9 @@
         "strictNullChecks": true,
         "suppressImplicitAnyIndexErrors": true,
         "noUnusedLocals": true,
+        "resolveJsonModule": true,
         "noUnusedParameters": true
     },
-    "include": ["./src/**/*"],
+    "include": ["./src/**/*", "./package.json", "index.ts"],
     "exclude": ["node_modules", "dist", "example", "rollup.config.js", "tests"]
 }

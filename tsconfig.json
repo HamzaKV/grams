@@ -21,5 +21,5 @@
         "noUnusedParameters": true
     },
     "include": ["./src/**/*", "./package.json", "index.ts"],
-    "exclude": ["node_modules", "dist", "example", "rollup.config.js", "tests"]
+    "exclude": ["node_modules", "dist", "example", "tests"]
 }

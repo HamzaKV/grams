@@ -9,7 +9,8 @@
   "private": false,
   "scripts": {
     "clean": "rimraf dist/",
-    "build": "yarn clean && tsc",
+    "copy-files": "copyfiles -u 1 \"src/**/*.d.ts\" dist/src",
+    "build": "yarn clean && tsc && yarn copy-files",
     "git:main": "git checkout \"main\"",
     "git:push:main": "git push -u origin \"main\" --tags",
     "patch": "yarn git:main && yarn version --patch && yarn git:push:main",
@@ -35,6 +36,7 @@
     "@types/react-dom": "^17.0.9",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.2",

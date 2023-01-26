@@ -1,38 +1,59 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "es6": true
-    },
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint", "react"],
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+    root: true,
+    parser: '@typescript-eslint/parser',
+    plugins: ['@typescript-eslint', 'react', 'react-hooks'],
+    extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react/recommended',
+        'prettier',
     ],
-    "rules": {
-        "@typescript-eslint/no-explicit-any": 0,
-        "quotes": [
+    parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        ecmaFeatures: {
+            jsx: true,
+        },
+    },
+    rules: {
+        semi: 'error',
+        quotes: [
             2,
-            "single",
+            'single',
             {
-                "avoidEscape": true,
-                "allowTemplateLiterals": true
-            }
+                avoidEscape: true,
+                allowTemplateLiterals: true,
+            },
         ],
-        "indent": ["error", 4, { "SwitchCase": 1 }],
-        "max-len": ["error", { "code": 80, "ignoreComments": true }],
-        "linebreak-style": 0,
-        "no-extra-boolean-cast": "off",
-        "keyword-spacing": ["error", { "before": true, "after": true }],
-        "semi": ["error", "always"]
-    }
+        indent: ['error', 4, { SwitchCase: 1 }],
+        'max-len': [
+            'error',
+            {
+                code: 80,
+                ignoreComments: true,
+                ignoreStrings: true,
+                ignoreTemplateLiterals: true,
+            },
+        ],
+        'linebreak-style': 0,
+        'keyword-spacing': ['error', { before: true, after: true }],
+        'eol-last': ['error', 'always'],
+        'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1 }],
+        'object-curly-spacing': ['error', 'always'],
+        'react-hooks/exhaustive-deps': 'error',
+        'react/jsx-uses-react': 'off',
+        'react/react-in-jsx-scope': 'off',
+        'react/prop-types': 0,
+        'no-console': 'error',
+        '@typescript-eslint/no-empty-interface': 'off'
+    },
+    env: {
+        browser: true,
+        node: true,
+    },
+    settings: {
+        react: {
+            version: 'detect',
+        },
+    },
 };

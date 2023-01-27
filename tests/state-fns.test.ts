@@ -19,7 +19,9 @@ describe('Testing getter and setter fns', () => {
     };
     const type = 'string';
     const stateType = 'stateful';
-    const middleware = [() => true];
+    const middleware = {
+        test: () => false
+    };
     const g = gram(defaultValue, type, stateType, produce, actions, effects, middleware);
     const store = createStore({ [gramKey]: g, [gramKey2]: g });
     const map = store.stateMap;

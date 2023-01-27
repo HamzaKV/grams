@@ -7,11 +7,11 @@ const useStoreActions = (
     actionName: string,
     key: string,
     ...props: string[]
-): (newValue: any) => void => {
+): (newValue?: any) => void => {
     const { map } = useContext();
     const setState = useSetStore(key, ...props);
 
-    const action = (newValue: any) => {
+    const action = (newValue?: any) => {
         if (map) {
             const accKey = mergeKey(key, ...props);
             const node = map.get(accKey);

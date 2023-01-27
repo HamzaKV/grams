@@ -16,7 +16,9 @@ describe('Create a store', () => {
     effects.onMount = jest.fn();
     const type = 'string';
     const stateType = 'stateful';
-    const middleware = [() => false];
+    const middleware = {
+        test: () => false
+    };
     const g = gram(defaultValue, type, stateType, produce, actions, effects, middleware);
     const store = createStore({ [gramKey]: g });
 

@@ -11,26 +11,28 @@ export type GramTypes = keyof typeof supportedTypes;
 export type GramStateTypes = keyof typeof supportedStateTypes;
 
 export type GramAction<T> = (
-    prev?: Value<T>,
-    newValue?: Value<T>,
-    defaultValue?: Value<T>,
-    get?: Getter<T>,
-    set?: Setter
+    prev: Value<T>,
+    newValue: Value<T>,
+    defaultValue: Value<T>,
+    get: Getter<T>,
+    set: Setter
 ) => (Value<T> | Promise<Value<T>>);
 
 export type GramProduce<T> = (
-    value?: Value<T>,
-    get?: Getter<T>,
+    value: Value<T>,
+    get: Getter<T>,
 ) => Value<T>;
 
 export type GramMiddleware<T> = (
-    prev?: Value<T>,
-    newValue?: Value<T>,
-    get?: Getter<T>,
-    set?: Setter
+    prev: Value<T>,
+    newValue: Value<T>,
+    get: Getter<T>,
+    set: Setter
 ) => boolean;
 
-export type GramMiddlewares<T> = GramMiddleware<T>[];
+export type GramMiddlewares<T> = {
+    [key: string]: GramMiddleware<T>;
+};
 
 export type Gram<T> = {
     defaultValue: Value<T>;
@@ -43,20 +45,20 @@ export type Gram<T> = {
         [key: string]: GramProduce<T>;
     };
     effects?: {
-        onMount?: (prev?: Value<T>, get?: Getter<T>, set?: Setter) => 
+        onMount?: (prev: Value<T>, get: Getter<T>, set: Setter) => 
             void | Value<T> | Promise<Value<T>>;
-        onUpdate?: (prev?: Value<T>, get?: Getter<T>, set?: Setter) => void;
-        onRender?: (prev?: Value<T>, get?: Getter<T>, set?: Setter) => void;
+        onUpdate?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
+        onRender?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
         onUnMount?: (
-            prev?: Value<T>,
-            get?: Getter<T>,
-            set?: Setter
+            prev: Value<T>,
+            get: Getter<T>,
+            set: Setter
         ) => void;
         onError?: (
-            error?: any,
-            prev?: Value<T>, 
-            get?: Getter<T>, 
-            set?: Setter
+            error: any,
+            prev: Value<T>, 
+            get: Getter<T>, 
+            set: Setter
         ) => void;
     };
     middleware?: GramMiddlewares<T>;
@@ -65,7 +67,7 @@ export type Gram<T> = {
 export type GramNode<T> = {
     defaultValue: Value<T>;
     value: Value<T>;
-    subscribers: any[];// TODO make subscribers as a set
+    subscribers: Set<any>;
     type: GramTypes;
     stateType: GramStateTypes;
     actions?: Gram<T>['actions'];

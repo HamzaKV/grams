@@ -2,6 +2,7 @@ import type { GramModels, GramNode } from '../types/gram';
 import StateMap from '../models/state-map';
 import type { StateMap as Map } from '../models/state-map';
 import { getter, setter } from './state-fns';
+import compareMiddleware from '../middleware/compare';
 
 const createStore = (
     grams: GramModels
@@ -15,13 +16,16 @@ const createStore = (
             const gramNode: GramNode<unknown> = {
                 defaultValue: Object.freeze(defaultValue),
                 value: gram.defaultValue,
-                subscribers: [],
+                subscribers: new Set(),
                 type: Object.freeze(gram.type),
                 stateType: Object.freeze(gram.stateType),
                 actions: Object.freeze(gram.actions),
                 produce: Object.freeze(gram.produce),
                 effects: Object.freeze(gram.effects),
-                middleware: gram.middleware,
+                middleware: {
+                    compare: compareMiddleware,
+                    ...(gram.middleware ?? {}),
+                },
             };
             map.add(accKey ? accKey + key : key, Object.seal(gramNode));
             // if (rootGramType === supportedTypes.granular) {

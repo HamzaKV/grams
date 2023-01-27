@@ -17,7 +17,9 @@ describe('State Map', () => {
     };
     const type = typeof defaultValue;
     const stateType = 'stateful';
-    const middleware = [() => false];
+    const middleware = {
+        test: () => false
+    };
     const gramNode: GramNode<unknown> = {
         defaultValue,
         value: defaultValue,

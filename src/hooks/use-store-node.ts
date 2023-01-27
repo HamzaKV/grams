@@ -28,14 +28,14 @@ const useStoreNode = (
     useDidMountEffect(() => {
         const s = subscriber(mapKey);
         if (map && node && node.stateType === supportedStateTypes.stateful) {
-            node.subscribers.push(forceUpdate);
-            s.setId(node.subscribers.length - 1);
+            node.subscribers.add(forceUpdate);
+            s.setId(node.subscribers.size - 1);
         }
 
         return () => {
             //cleanup -> remove from subscriber list on unmount
             if (map && node) {
-                node.subscribers.splice(s.getId(), 1);
+                node.subscribers.delete(s.getId());
                 if (node.effects?.onUnMount)
                     node.effects.onUnMount(
                         node.value,

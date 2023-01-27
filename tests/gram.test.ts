@@ -13,7 +13,9 @@ describe('Create gram', () => {
     };
     const type = 'string';
     const stateType = 'stateful';
-    const middleware = [() => false];
+    const middleware = {
+        test: () => false
+    };
     const g = gram(defaultValue, type, stateType, produce, actions, effects, middleware);
 
     it('should return the default value', () => {

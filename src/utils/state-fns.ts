@@ -25,8 +25,16 @@ export const setter: (map: StateMap) => Setter =
                 const prev = node.value;
                 try {
                     if (node) {
-                        if (node.middleware && node.middleware.length > 0) {
-                            for (const middleware of node.middleware) {
+                        if (
+                            node.middleware 
+                            && Object.keys(node.middleware).length > 0
+                        ) {
+                            for (
+                                const middlewareKey of 
+                                Object.keys(node.middleware)
+                            ) {
+                                const middleware = 
+                                    node.middleware[middlewareKey];
                                 if (
                                     !middleware(
                                         node.value,

@@ -167,7 +167,7 @@ root.render(
 ```js
 ...
 
-import { useStoreActions, useStoreValue } from "./grams";
+import { useStoreActions, useStoreValue } from "grams";
 
 ...
 

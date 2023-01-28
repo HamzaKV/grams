@@ -1,3 +1,4 @@
+// @ts-nocheck
 import gram from '../src/models/gram';
 
 describe('Create gram', () => {
@@ -43,6 +44,6 @@ describe('Create gram', () => {
     });
 
     it('should return the proxy value', () => {
-        expect(g.middleware[0]()).toBe(middleware[0]());
+        expect(g.middleware.test()).toBe(middleware.test());
     });
 });

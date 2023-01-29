@@ -63,6 +63,11 @@ Effects
 | onError | Runs if the state has failed. Cannot modify state directly. |
 
 ## Specifications
+### useIsStoreReady
+`useIsStoreReady() => boolean`
+
+A hook that returns a boolean indicating when the store is ready.
+
 ### useStore
 `useStore(key: string) => [state, setState]`
 

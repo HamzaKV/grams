@@ -1,24 +1,30 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import AppContext from './context';
 import createStore from '../utils/create-store';
 import type { GramModels } from '../types/gram';
 import type { Component } from '../types/component';
 import { StateMap } from '../models/state-map';
+import useDidMountEffect from '../hooks/use-did-mount-effect';
 
 interface IProps {
     models: GramModels;
 }
 
-let map: StateMap | null = null;
-
 const Provider: Component<IProps> = ({ models, children }) => {
-    if (!map) map = createStore(models).stateMap;
+    const [isReady, setIsReady] = useState(false);
     // using a ref to ensure the entire component is not re-rendered when any part of the state changes.
     // Component(s) should only be re-rendered when signaled to.
-    const mapRef = useRef(map);
+    const mapRef = useRef<StateMap | null>();
+
+    useDidMountEffect(() => {
+        mapRef.current = createStore(models).stateMap;
+        setIsReady(true);
+    }, []);
 
     return (
-        <AppContext.Provider value={{ map: mapRef.current }}>
+        <AppContext.Provider
+            value={{ map: mapRef.current as StateMap, isReady }}
+        >
             {children}
         </AppContext.Provider>
     );

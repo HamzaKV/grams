@@ -172,7 +172,7 @@ root.render(
 ```js
 ...
 
-import { useStoreActions, useStoreValue } from "grams";
+import { useStoreActions, useStoreValue, useStoreProduce } from "grams";
 
 ...
 
@@ -193,7 +193,7 @@ const ActionComponent = () => {
 ...
 
 const ProduceComponent = () => {
-  const isUnAuthenticated = useStoreValue("isUnAuthenticated", "isAuthenticated");
+  const isUnAuthenticated = useStoreProduce("isUnAuthenticated", "isAuthenticated");
 
   return (
     <h1>Is Unauthenticated: {String(isUnAuthenticated)}</h1>

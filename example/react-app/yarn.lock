@@ -4710,10 +4710,10 @@ graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4, 
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
 
-grams@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/grams/-/grams-0.2.2.tgz#6d98349a5a860d61c2d590a40f674a1f3bf74a71"
-  integrity sha512-Y1Cz0sm4jMiWSuh8YPIIzIePHEX+npf0/Q4ic2ZRChwcyn5RSGGdHhEPOiJdOrmdZFBLlzA1fN0pUPFFofYaWg==
+grams@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/grams/-/grams-0.2.3.tgz#f39478a78f98d2932c42d46176750cd65aba6108"
+  integrity sha512-jCGy+jY85sh6IE8egnxGrdd4drZhL4TV0CpThFhbeQDtWPFCfstQXq3k++KPKai0snECfKdzc1YLYgIRg2XeqQ==
 
 grapheme-splitter@^1.0.4:
   version "1.0.4"

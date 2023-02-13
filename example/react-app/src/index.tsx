@@ -8,14 +8,14 @@ import models from './store';
 import { Provider } from 'grams';
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-      <Provider models={models}>
-        <App />
-      </Provider>
-  </React.StrictMode>
+    <Provider models={models}>
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
+    </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,16 +1,21 @@
 import useStoreNode from './use-store-node';
 import { getter } from '../utils/state-fns';
 import useAppContext from './use-context';
+import type { StateKeys } from '../utils/create-store';
 
 const useStoreProduce = (
-    produceName: string,
-    key: string
+    produceName: string | ((stateKeys: StateKeys) => string),
+    key: string | ((stateKeys: StateKeys) => string)
 ): unknown => {
-    const { map } = useAppContext();
+    const { map, stateKeys } = useAppContext();
     const node = useStoreNode(key);
 
-    return node && map
-        ? node.produce?.[produceName](node.value, getter(map))
+    return node && map && stateKeys
+        ? node.produce?.[
+            typeof produceName === 'function'
+                ? produceName(stateKeys)
+                : produceName
+        ](node.value, getter(map))
         : null;
 };
 

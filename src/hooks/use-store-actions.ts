@@ -1,20 +1,21 @@
 import { getter, setter } from '../utils/state-fns';
 import useContext from './use-context';
 import useSetStore from './use-set-store';
+import type { StateKeys } from '../utils/create-store';
 
 const useStoreActions = (
-    actionName: string,
-    key: string
-): (newValue?: any) => void => {
-    const { map } = useContext();
+    actionName: string | ((stateKeys: StateKeys) => string),
+    key: string | ((stateKeys: StateKeys) => string)
+): (newValue?: unknown) => void => {
+    const { map, stateKeys } = useContext();
     const setState = useSetStore(key);
 
-    const action = (newValue?: any) => {
-        if (map) {
-            const node = map.get(key);
-            const actions = map.get(key)?.actions;
+    const action = (newValue?: unknown) => {
+        if (map && stateKeys) {
+            const node = map.get(typeof key === 'function' ? key(stateKeys) : key);
+            const actions = map.get(typeof key === 'function' ? key(stateKeys) : key)?.actions;
             if (actions) {
-                const action = actions[actionName];
+                const action = actions[typeof actionName === 'function' ? actionName(stateKeys) : actionName];
                 if (action) {
                     const result = action(
                         node?.value, 

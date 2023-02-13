@@ -69,27 +69,27 @@ Effects
 A hook that returns a boolean indicating when the store is ready.
 
 ### useStore
-`useStore(key: string) => [state, setState]`
+`useStore(key: string | ((stateKeys: StateKeys) => string)) => [state, setState]`
 
 A hook that accepts the key of the state, subscribes the component to the state, and returns the value of the state as well as its setter function. (Works similar to `useState` found in React hooks).
 
 ### useStoreValue
-`useStoreValue(key: string) => state`
+`useStoreValue(key: string | ((stateKeys: StateKeys) => string)) => state`
 
 A hook that accepts the key of the state, subscribes the component to the state and __only__ returns its value.
 
 ### useSetStore
-`useSetStore(key: string) => setState`
+`useSetStore(key: string | ((stateKeys: StateKeys) => string)) => setState`
 
 A hook that accepts the key of the state and returns its setter function. *It does __not__ subscribe the component to the state.*
 
 ### useStoreProduce
-`useStoreProduce(produceName: string, key: string) => state`
+`useStoreProduce(produceName: string | ((stateKeys: StateKeys) => string), key: string | ((stateKeys: StateKeys) => string)) => state`
 
 A hook that accepts the name of the produce, the key of the state, subscribes the component to the state, and returns its mutated value.
 
 ### useStoreActions
-`useStoreActions(actionName: string, key: string) => setState`
+`useStoreActions(actionName: string | ((stateKeys: StateKeys) => string), key: string | ((stateKeys: StateKeys) => string)) => setState`
 
 A hook that accepts the name of the action, the key of the state, and returns its action function. *It does __not__ subscribe the component to the state.*
 
@@ -199,7 +199,7 @@ const ProduceComponent = () => {
 ...
 
 const ValueComponent = () => {
-  const isAuthenticated = useStoreValue("isAuthenticated");
+  const isAuthenticated = useStoreValue((storeKeys) => storeKeys.isAuthenticated.key);
 
   return (
     <h1>Is Authenticated: {String(isAuthenticated)}</h1>
@@ -209,7 +209,7 @@ const ValueComponent = () => {
 ...
 
 const Component = () => {
-  const [isAuthenticated, setIsAuthenticated] = useStore("isAuthenticated");
+  const [isAuthenticated, setIsAuthenticated] = useStore((storeKeys) => storeKeys.isAuthenticated.key);
 
   return (
     <div>

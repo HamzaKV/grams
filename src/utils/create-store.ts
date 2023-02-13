@@ -4,14 +4,38 @@ import type { StateMap as Map } from '../models/state-map';
 import { getter, setter } from './state-fns';
 import compareMiddleware from '../middleware/compare';
 
+export type StateKeys = {
+    [key: string]: {
+        key: string;
+        produceKeys: { [key: string]: string };
+        actionKeys: { [key: string]: string };
+    };
+};
+
 const createStore = (
     grams: GramModels
-): { stateMap: Map; }  => {
+): { stateMap: Map; stateKeys: StateKeys } => {
     const map = StateMap();
+    const stateKeys: StateKeys = {};
 
     const make = (models: GramModels, accKey: string) => {
         for (const key in models) {
             const gram = models[key];
+            stateKeys[key] = {
+                key,
+                produceKeys: gram.produce
+                    ? Object.keys(gram.produce).reduce((acc, key) => {
+                        acc[key] = key;
+                        return acc;
+                    }, {})
+                    : {},
+                actionKeys: gram.actions
+                    ? Object.keys(gram.actions).reduce((acc, key) => {
+                        acc[key] = key;
+                        return acc;
+                    }, {})
+                    : {},
+            };
             const defaultValue = gram.defaultValue ?? null;
             const gramNode: GramNode<unknown> = {
                 defaultValue: Object.freeze(defaultValue),
@@ -28,22 +52,6 @@ const createStore = (
                 },
             };
             map.add(accKey ? accKey + key : key, Object.seal(gramNode));
-            // if (rootGramType === supportedTypes.granular) {
-            //     if (typeof gram.defaultValue !== 'object')
-            //         throw new Error('granular can only be type object');
-            //     const gramModels: GramModels = {};
-            //     for (const gramKey in gram.defaultValue) {
-            //         gramModels[gramKey] = gram.defaultValue[gramKey].type 
-            //             ? gram.defaultValue[gramKey] : newGram(
-            //                 gram.defaultValue[gramKey],
-            //                 typeof gram.defaultValue[gramKey] as GramTypes
-            //             );
-            //     }
-            //     make(
-            //         gramModels,
-            //         accKey ? accKey + key + propDenote : key + propDenote
-            //     );
-            // }
         }
     };
 
@@ -57,20 +65,20 @@ const createStore = (
             const prev = gramNode.value;
             try {
                 const result = gramNode.effects.onMount(
-                    prev, 
-                    getter(map), 
+                    prev,
+                    getter(map),
                     setter(map)
                 );
                 if (result) {
                     if (result instanceof Promise) {
                         result
                             .then((value) => setter(map)(value, key))
-                            .catch(err => {
-                                if (gramNode?.effects?.onError) 
+                            .catch((err) => {
+                                if (gramNode?.effects?.onError)
                                     gramNode.effects.onError(
-                                        err, 
-                                        prev, 
-                                        getter(map), 
+                                        err,
+                                        prev,
+                                        getter(map),
                                         setter(map)
                                     );
                             });
@@ -79,18 +87,18 @@ const createStore = (
                     }
                 }
             } catch (err) {
-                if (gramNode.effects.onError) 
+                if (gramNode.effects.onError)
                     gramNode.effects.onError(
-                        err, 
-                        prev, 
-                        getter(map), 
+                        err,
+                        prev,
+                        getter(map),
                         setter(map)
                     );
             }
         }
     }
 
-    return { stateMap: map };
+    return { stateMap: map, stateKeys };
 };
 
 export default createStore;

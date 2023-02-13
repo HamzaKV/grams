@@ -25,6 +25,7 @@ Benefits:
 
 ### Supported Frameworks
 - React (>=16.8.0)
+- React Native (>=0.59)
 
 ### To install:
 
@@ -102,11 +103,9 @@ import { Provider } from "grams";
 ...
 
 root.render(
-  <StrictMode>
     <Provider>
       <App />
     </Provider>
-  </StrictMode>
 );
 ```
 
@@ -159,11 +158,9 @@ import { Provider } from "grams";
 ...
 
 root.render(
-  <StrictMode>
     <Provider models={{ isAuthenticated, isLoading }}>
       <App />
     </Provider>
-  </StrictMode>
 );
 ```
 
@@ -226,3 +223,16 @@ const Component = () => {
   );
 };
 ```
+
+## Caveats
+- In `StrictMode`, the store is created twice therefore states are mounted twice. For further information regarding `StrictMode`, visit [React Docs](https://reactjs.org/docs/strict-mode.html).
+  - To avoid this, the recommended approach is to add the `Provider` above `StrictMode`:
+  ```js
+  root.render(
+    <Provider models={{ isAuthenticated, isLoading }}>
+      <StrictMode>
+          <App />
+      </StrictMode>
+    </Provider>
+  );
+  ```

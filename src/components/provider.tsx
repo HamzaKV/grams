@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import AppContext from './context';
 import createStore from '../utils/create-store';
 import type { GramModels } from '../types/gram';
 import type { Component } from '../types/component';
 import { StateMap } from '../models/state-map';
-import useDidMountEffect from '../hooks/use-did-mount-effect';
 
 interface IProps {
     models: GramModels;
@@ -16,9 +15,10 @@ const Provider: Component<IProps> = ({ models, children }) => {
     // Component(s) should only be re-rendered when signaled to.
     const mapRef = useRef<StateMap | null>();
 
-    useDidMountEffect(() => {
+    useEffect(() => {
         mapRef.current = createStore(models).stateMap;
         setIsReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

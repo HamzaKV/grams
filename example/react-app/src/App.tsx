@@ -55,7 +55,7 @@ const LoginButton = () => {
     return (
         <button
             onClick={() => {
-                login(true);
+                login();
             }}
         >
             Login
@@ -69,7 +69,7 @@ const LogoutButton = () => {
     return (
         <button
             onClick={() => {
-                logout(true);
+                logout();
             }}
         >
             Logout

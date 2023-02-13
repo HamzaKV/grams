@@ -2,13 +2,11 @@ import { supportedStateTypes } from '../constants/strings';
 import type { StateMap } from '../models/state-map';
 import type { Getter, Setter } from '../types/gram';
 import { getAllRelations } from './search-map';
-import { mergeKey } from './state-prop';
 
 export const getter: (map: StateMap) => Getter<unknown> =
     (map) =>
-        (key: string, ...props: string[]): unknown => {
-            const mapKey = mergeKey(key, ...props);
-            const node = map.get(mapKey);
+        (key: string): unknown => {
+            const node = map.get(key);
             return node ? node.value : null;
         };
 
@@ -16,11 +14,9 @@ export const setter: (map: StateMap) => Setter =
     (map: StateMap) =>
         (
             value: unknown | ((prev: unknown) => unknown), 
-            key: string, 
-            ...props: string[]
+            key: string
         ): void => {
-            const mapKey = mergeKey(key, ...props);
-            const nodes = getAllRelations(map)(mapKey);
+            const nodes = getAllRelations(map)(key);
             nodes.forEach((node) => {
                 const prev = node.value;
                 try {

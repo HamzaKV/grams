@@ -1,21 +1,18 @@
 import { getter, setter } from '../utils/state-fns';
-import { mergeKey } from '../utils/state-prop';
 import useContext from './use-context';
 import useSetStore from './use-set-store';
 
 const useStoreActions = (
     actionName: string,
-    key: string,
-    ...props: string[]
+    key: string
 ): (newValue?: any) => void => {
     const { map } = useContext();
-    const setState = useSetStore(key, ...props);
+    const setState = useSetStore(key);
 
     const action = (newValue?: any) => {
         if (map) {
-            const accKey = mergeKey(key, ...props);
-            const node = map.get(accKey);
-            const actions = map.get(accKey)?.actions;
+            const node = map.get(key);
+            const actions = map.get(key)?.actions;
             if (actions) {
                 const action = actions[actionName];
                 if (action) {

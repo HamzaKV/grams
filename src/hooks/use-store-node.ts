@@ -1,14 +1,12 @@
 import { useState, useMemo, useEffect } from 'react';
 import useAppContext from './use-context';
 import subscriber from '../models/subscriber';
-import { mergeKey } from '../utils/state-prop';
 import { getter, setter } from '../utils/state-fns';
 import { GramNode } from '../types/gram';
 import { supportedStateTypes } from '../constants/strings';
 
 const useStoreNode = (
-    key: string,
-    ...props: string[]
+    key: string
 ): GramNode<unknown> | null | undefined => {
     const { map } = useAppContext();
 
@@ -18,14 +16,12 @@ const useStoreNode = (
         updateState((prev) => (prev === 0 ? 1 : 0));
     };
 
-    const mapKey = useMemo(() => mergeKey(key, ...props), [key, props]);
-
     const node = useMemo(() => {
-        return map ? map.get(mapKey) : null;
-    }, [map, mapKey]);
+        return map ? map.get(key) : null;
+    }, [map, key]);
 
     useEffect(() => {
-        const s = subscriber(mapKey);
+        const s = subscriber(key);
         if (map && node && node.stateType === supportedStateTypes.stateful) {
             node.subscribers.add(forceUpdate);
             s.setId(node.subscribers.size - 1);
@@ -43,7 +39,7 @@ const useStoreNode = (
                     );
             }
         };
-    }, [map, mapKey, node]);
+    }, [map, key, node]);
 
     return node;
 };

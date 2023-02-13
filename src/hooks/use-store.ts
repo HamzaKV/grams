@@ -1,9 +1,9 @@
 import useStoreValue from './use-store-value';
 import useSetStore from './use-set-store';
 
-const useStore = (key: string, ...props: string[]) => {
-    const state = useStoreValue(key, ...props);
-    const setState = useSetStore(key, ...props);
+const useStore = (key: string) => {
+    const state = useStoreValue(key);
+    const setState = useSetStore(key);
 
     return [state, setState];
 };

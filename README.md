@@ -25,7 +25,6 @@ Benefits:
 
 ### Supported Frameworks
 - React (>=16.8.0)
-- React Native (>=0.59)
 
 ### To install:
 

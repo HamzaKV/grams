@@ -1,4 +1,4 @@
-type Subscriber = (key: string) => {
+export type Subscriber = (key: string) => {
     setId: (id: number) => number;
     getId: () => number;
     getKey: () => string;

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import AppContext from './context';
 import createStore, { StateKeys } from '../utils/create-store';
 import type { GramModels } from '../types/gram';
@@ -10,26 +10,18 @@ interface IProps {
 }
 
 const Provider: Component<IProps> = ({ models, children }) => {
-    const [isReady, setIsReady] = useState(false);
     // using a ref to ensure the entire component is not re-rendered when any part of the state changes.
     // Component(s) should only be re-rendered when signaled to.
     const mapRef = useRef<{
         stateMap: StateMap;
         stateKeys: StateKeys;
-    } | null>();
-
-    useEffect(() => {
-        mapRef.current = createStore(models);
-        setIsReady(true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }>(createStore(models));
 
     return (
         <AppContext.Provider
             value={{
-                map: mapRef.current?.stateMap,
-                isReady,
-                stateKeys: mapRef.current?.stateKeys,
+                map: mapRef.current.stateMap,
+                stateKeys: mapRef.current.stateKeys,
             }}
         >
             {children}

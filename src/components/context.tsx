@@ -4,7 +4,6 @@ import { StateKeys } from '../utils/create-store';
 
 export interface IContext {
     map: Map;
-    isReady: boolean;
     stateKeys: StateKeys;
 }
 

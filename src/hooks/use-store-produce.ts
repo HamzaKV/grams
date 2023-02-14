@@ -12,9 +12,9 @@ const useStoreProduce = (
 
     return node && map && stateKeys
         ? node.produce?.[
-            typeof produceName === 'function'
-                ? produceName(stateKeys)
-                : produceName
+            typeof produceName === 'string'
+                ? produceName
+                : produceName(stateKeys)
         ](node.value, getter(map))
         : null;
 };

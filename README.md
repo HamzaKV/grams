@@ -63,10 +63,6 @@ Effects
 | onError | Runs if the state has failed. Cannot modify state directly. |
 
 ## Specifications
-### useIsStoreReady
-`useIsStoreReady() => boolean`
-
-A hook that returns a boolean indicating when the store is ready.
 
 ### useStore
 `useStore(key: string | ((stateKeys: StateKeys) => string)) => [state, setState]`
@@ -225,7 +221,7 @@ const Component = () => {
 ```
 
 ## Caveats
-- In `StrictMode`, the store is created twice therefore states are mounted twice. For further information regarding `StrictMode`, visit [React Docs](https://reactjs.org/docs/strict-mode.html).
+- In `StrictMode`, the store does not function well due to limitations. For further information regarding `StrictMode`, visit [React Docs](https://reactjs.org/docs/strict-mode.html).
   - To avoid this, the recommended approach is to add the `Provider` above `StrictMode`:
   ```js
   root.render(

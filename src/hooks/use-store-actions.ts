@@ -12,10 +12,10 @@ const useStoreActions = (
 
     const action = (newValue?: unknown) => {
         if (map && stateKeys) {
-            const node = map.get(typeof key === 'function' ? key(stateKeys) : key);
-            const actions = map.get(typeof key === 'function' ? key(stateKeys) : key)?.actions;
+            const node = map.get(typeof key === 'string' ? key : key(stateKeys));
+            const actions = map.get(typeof key === 'string' ? key : key(stateKeys))?.actions;
             if (actions) {
-                const action = actions[typeof actionName === 'function' ? actionName(stateKeys) : actionName];
+                const action = actions[typeof actionName === 'string' ? actionName : actionName(stateKeys)];
                 if (action) {
                     const result = action(
                         node?.value, 

@@ -5,13 +5,13 @@ export { default as useSetStore } from './src/hooks/use-set-store';
 export { default as useStore } from './src/hooks/use-store';
 export { default as useStoreProduce } from './src/hooks/use-store-produce';
 export { default as useStoreActions } from './src/hooks/use-store-actions';
-export { default as useIsStoreReady } from './src/hooks/use-is-store-ready';
 
 // Models
 export { default as gram } from './src/models/gram';
 
 // Types
 export type { GramNode, Gram, GramTypes, GramStateTypes } from './src/types/gram';
+export type { StateKeys } from './src/utils/create-store';
 
 // Middleware
 export { default as compare } from './src/middleware/compare';

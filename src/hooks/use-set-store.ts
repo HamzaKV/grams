@@ -4,12 +4,12 @@ import type { StateKeys } from '../utils/create-store';
 
 const useSetStore = (
     key: string | ((stateKeys: StateKeys) => string)
-): ((newValue: unknown) => void) => {
+): ((value: unknown | ((prev: unknown) => unknown)) => void) => {
     const { map, stateKeys } = useAppContext();
 
     const setStore = (value: unknown | ((prev: unknown) => unknown)) => {
         if (map && stateKeys) {
-            setter(map)(value, typeof key === 'function' ? key(stateKeys) : key);
+            setter(map)(value, typeof key === 'string' ? key : key(stateKeys as StateKeys));
         }
     };
 

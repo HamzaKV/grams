@@ -1,6 +1,6 @@
 {
   "name": "grams",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Granular ReActive Management of State",
   "main": "index.js",
   "repository": "https://github.com/HamzaKV/grams.git",

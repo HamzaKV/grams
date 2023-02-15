@@ -45,11 +45,12 @@ const useStoreNode = (
                 if (node.effects?.onUnMount)
                     node.effects.onUnMount(
                         node.value,
-                        getter(map),
-                        setter(map)
+                        getter(map, stateKeys as StateKeys),
+                        setter(map, stateKeys as StateKeys)
                     );
             }
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [map, node, resolvedKey]);
 
     return node;

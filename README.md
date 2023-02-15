@@ -130,7 +130,7 @@ export const isAuthenticated = gram(
   },
   {
     onMount: async (_, __, set) => {
-      set(true, "isLoading");
+      set(true, (storeKeys) => storeKeys.isLoading.key);
       await delay(1000);
       set(false, "isLoading");
       return true;
@@ -230,5 +230,34 @@ const Component = () => {
           <App />
       </StrictMode>
     </Provider>
+  );
+  ```
+- Poor management, could lead to infinite state cycles - example listed below.
+  ```js
+  const isAuthenticated = gram(
+    false,
+    "boolean",
+    "stateful",
+    {
+      isUnAuthenticated: (currValue) => !currValue
+    },
+    {
+      login: () => true,
+      logout: () => false
+    },
+    {
+      onMount: async (_, __, set) => {
+        set(true, (storeKeys) => storeKeys.isAuthenticated.key);
+        await delay(1000);
+        set(false, (storeKeys) => storeKeys.isAuthenticated.key);
+        return true;
+      }
+    },
+    {
+      check: () => {
+        console.log("auth middleware");
+        return true;
+      }
+    }
   );
   ```

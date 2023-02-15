@@ -66,24 +66,24 @@ const createStore = (
             try {
                 const result = gramNode.effects.onMount(
                     prev,
-                    getter(map),
-                    setter(map)
+                    getter(map, stateKeys),
+                    setter(map, stateKeys)
                 );
                 if (result) {
                     if (result instanceof Promise) {
                         result
-                            .then((value) => setter(map)(value, key))
+                            .then((value) => setter(map, stateKeys)(value, key))
                             .catch((err) => {
                                 if (gramNode?.effects?.onError)
                                     gramNode.effects.onError(
                                         err,
                                         prev,
-                                        getter(map),
-                                        setter(map)
+                                        getter(map, stateKeys),
+                                        setter(map, stateKeys)
                                     );
                             });
                     } else {
-                        setter(map)(result, key);
+                        setter(map, stateKeys)(result, key);
                     }
                 }
             } catch (err) {
@@ -91,8 +91,8 @@ const createStore = (
                     gramNode.effects.onError(
                         err,
                         prev,
-                        getter(map),
-                        setter(map)
+                        getter(map, stateKeys),
+                        setter(map, stateKeys)
                     );
             }
         }

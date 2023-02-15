@@ -15,7 +15,7 @@ const useStoreProduce = (
             typeof produceName === 'string'
                 ? produceName
                 : produceName(stateKeys)
-        ](node.value, getter(map))
+        ](node.value, getter(map, stateKeys))
         : null;
 };
 

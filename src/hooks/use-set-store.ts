@@ -9,7 +9,7 @@ const useSetStore = (
 
     const setStore = (value: unknown | ((prev: unknown) => unknown)) => {
         if (map && stateKeys) {
-            setter(map)(value, typeof key === 'string' ? key : key(stateKeys as StateKeys));
+            setter(map, stateKeys)(value, typeof key === 'string' ? key : key(stateKeys));
         }
     };
 

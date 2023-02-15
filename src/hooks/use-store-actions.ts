@@ -21,8 +21,8 @@ const useStoreActions = (
                         node?.value, 
                         newValue, 
                         node?.defaultValue, 
-                        getter(map), 
-                        setter(map)
+                        getter(map, stateKeys), 
+                        setter(map, stateKeys)
                     );
             
                     if (result instanceof Promise) {

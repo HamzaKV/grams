@@ -2,21 +2,22 @@ import { supportedStateTypes } from '../constants/strings';
 import type { StateMap } from '../models/state-map';
 import type { Getter, Setter } from '../types/gram';
 import { getAllRelations } from './search-map';
+import type { StateKeys } from '../utils/create-store';
 
-export const getter: (map: StateMap) => Getter<unknown> =
-    (map) =>
-        (key: string): unknown => {
-            const node = map.get(key);
+export const getter: (map: StateMap, stateKeys: StateKeys) => Getter<unknown> =
+    (map, stateKeys) =>
+        (key: string | ((stateKeys: StateKeys) => string)): unknown => {
+            const node = map.get(typeof key === 'string' ? key : key(stateKeys));
             return node ? node.value : null;
         };
 
-export const setter: (map: StateMap) => Setter =
-    (map: StateMap) =>
+export const setter: (map: StateMap, stateKeys: StateKeys) => Setter =
+    (map, stateKeys) =>
         (
             value: unknown | ((prev: unknown) => unknown), 
-            key: string
+            key: string | ((stateKeys: StateKeys) => string)
         ): void => {
-            const nodes = getAllRelations(map)(key);
+            const nodes = getAllRelations(map)(typeof key === 'string' ? key : key(stateKeys));
             nodes.forEach((node) => {
                 const prev = node.value;
                 try {
@@ -35,8 +36,8 @@ export const setter: (map: StateMap) => Setter =
                                     !middleware(
                                         node.value,
                                         value,
-                                        getter(map),
-                                        setter(map)
+                                        getter(map, stateKeys),
+                                        setter(map, stateKeys)
                                     )
                                 )
                                     return;
@@ -50,25 +51,26 @@ export const setter: (map: StateMap) => Setter =
                         if (node.effects?.onUpdate)
                             node.effects.onUpdate(
                                 node.value, 
-                                getter(map), 
-                                setter(map)
+                                getter(map, stateKeys), 
+                                setter(map, stateKeys)
                             );
-                        if (node.stateType === supportedStateTypes.stateful)
+                        if (node.stateType === supportedStateTypes.stateful) {
                             node.subscribers.forEach((s) => s());
-                        if (node.effects?.onRender)
-                            node.effects.onRender(
-                                node.value, 
-                                getter(map), 
-                                setter(map)
-                            );
+                            if (node.effects?.onRender)
+                                node.effects.onRender(
+                                    node.value, 
+                                    getter(map, stateKeys), 
+                                    setter(map, stateKeys)
+                                );
+                        }
                     }
                 } catch (err) {
                     if (node.effects?.onError) 
                         node.effects.onError(
                             err, 
                             prev, 
-                            getter(map), 
-                            setter(map)
+                            getter(map, stateKeys), 
+                            setter(map, stateKeys)
                         );
                 }
             });

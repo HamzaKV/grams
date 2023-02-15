@@ -1,11 +1,7 @@
 import { gram } from 'grams';
 
 const actions = {
-    login: () => {
-        // eslint-disable-next-line no-console
-        console.log('login');
-        return true;
-    },
+    login: () => true,
     logout: () => false,
 };
 const effects = {

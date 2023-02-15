@@ -1,10 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
-import { useStoreActions, useStoreProduce, useStoreValue, Provider } from 'grams';
+import {
+    useStoreActions,
+    useStoreProduce,
+    useStoreValue,
+    Provider,
+} from 'grams';
 import models from './store';
 
 const App = () => {
-    const isAuthenticated = useStoreValue('isAuthenticated');
+    const isAuthenticated = useStoreValue(
+        (storeKeys) => storeKeys.isAuthenticated.key
+    );
 
     return (
         <View style={styles.container}>
@@ -54,7 +61,10 @@ const AddItem = () => {
 };
 
 const LoginButton = () => {
-    const login = useStoreActions('login', 'isAuthenticated');
+    const login = useStoreActions(
+        (storeKeys) => storeKeys.isAuthenticated.actionKeys.login,
+        (storeKeys) => storeKeys.isAuthenticated.key
+    );
 
     return (
         <Pressable
@@ -68,7 +78,10 @@ const LoginButton = () => {
 };
 
 const LogoutButton = () => {
-    const logout = useStoreActions('logout', 'isAuthenticated');
+    const logout = useStoreActions(
+        (storeKeys) => storeKeys.isAuthenticated.actionKeys.logout,
+        (storeKeys) => storeKeys.isAuthenticated.key
+    );
 
     return (
         <Pressable
@@ -83,7 +96,7 @@ const LogoutButton = () => {
 
 const Root = () => {
     return (
-        <Provider 
+        <Provider
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             models={models}

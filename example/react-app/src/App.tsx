@@ -1,13 +1,11 @@
 import { useStoreActions, useStoreProduce, useStoreValue } from 'grams';
 
 const App = () => {
-    const isAuthenticated = useStoreValue('isAuthenticated');
-    return (
-            <div>
-                {isAuthenticated ? <AuthScreen /> : <LoginButton />}
-            </div>
+    const isAuthenticated = useStoreValue(
+        (storeKeys) => storeKeys.isAuthenticated.key
     );
-}
+    return <div>{isAuthenticated ? <AuthScreen /> : <LoginButton />}</div>;
+};
 
 const AuthScreen = () => {
     const list = useStoreValue('list');
@@ -50,7 +48,10 @@ const AddItem = () => {
 };
 
 const LoginButton = () => {
-    const login = useStoreActions('login', 'isAuthenticated');
+    const login = useStoreActions(
+        (storeKeys) => storeKeys.isAuthenticated.actionKeys.login,
+        (storeKeys) => storeKeys.isAuthenticated.key
+    );
 
     return (
         <button
@@ -64,7 +65,10 @@ const LoginButton = () => {
 };
 
 const LogoutButton = () => {
-    const logout = useStoreActions('logout', 'isAuthenticated');
+    const logout = useStoreActions(
+        (storeKeys) => storeKeys.isAuthenticated.actionKeys.logout,
+        (storeKeys) => storeKeys.isAuthenticated.key
+    );
 
     return (
         <button

@@ -19,7 +19,6 @@ export const user = gram(
 
 export const firstName = gram(user.defaultValue.firstName, 'string', 'stateful', undefined, undefined, {
     onUpdate: (prev, get, set) => {
-        // @ts-ignore
         const user: any = get((storeKeys) => storeKeys.user.key);
         set({ ...user, firstName: prev }, 'user');
     },

@@ -1,4 +1,4 @@
-import { useStoreActions, useStoreProduce, useStoreValue } from 'grams';
+import { useStoreActions, useStoreProduce, useStoreValue, useStore } from 'grams';
 
 const App = () => {
     const isAuthenticated = useStoreValue(
@@ -13,6 +13,7 @@ const AuthScreen = () => {
     return (
         <div>
             <LogoutButton />
+            <FirstName />
             <ul>
                 {(list as any).map((item: any, index: number) => (
                     <li key={index}>
@@ -78,6 +79,22 @@ const LogoutButton = () => {
         >
             Logout
         </button>
+    );
+};
+
+const FirstName = () => {
+    const [firstName, setFirstName] = useStore((storeKeys) => storeKeys.firstName.key);
+
+    return (
+        <div>
+            <input
+                value={firstName as string}
+                onChange={(e) => {
+                    // @ts-ignore
+                    setFirstName(e.target.value);
+                }}
+            />
+        </div>
     );
 };
 

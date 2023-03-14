@@ -1,10 +1,16 @@
 import { supportedTypes, supportedStateTypes } from '../constants/strings';
+import type { StateKeys } from '../utils/create-store';
 
 export type Value<T> = T;
 
-export type Getter<T> = (key: string, ...props: string[]) => Value<T>;
+export type Getter<T> = (
+    key: string | ((stateKeys: StateKeys) => string)
+) => Value<T>;
 
-export type Setter = (value: unknown, key: string, ...props: string[]) => void;
+export type Setter = (
+    value: unknown,
+    key: string | ((stateKeys: StateKeys) => string)
+) => void;
 
 export type GramTypes = keyof typeof supportedTypes;
 
@@ -16,12 +22,9 @@ export type GramAction<T> = (
     defaultValue: Value<T>,
     get: Getter<T>,
     set: Setter
-) => (Value<T> | Promise<Value<T>>);
+) => Value<T> | Promise<Value<T>>;
 
-export type GramProduce<T> = (
-    value: Value<T>,
-    get: Getter<T>,
-) => Value<T>;
+export type GramProduce<T> = (value: Value<T>, get: Getter<T>) => Value<T>;
 
 export type GramMiddleware<T> = (
     prev: Value<T>,
@@ -45,19 +48,18 @@ export type Gram<T> = {
         [key: string]: GramProduce<T>;
     };
     effects?: {
-        onMount?: (prev: Value<T>, get: Getter<T>, set: Setter) => 
-            void | Value<T> | Promise<Value<T>>;
-        onUpdate?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
-        onRender?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
-        onUnMount?: (
+        onMount?: (
             prev: Value<T>,
             get: Getter<T>,
             set: Setter
-        ) => void;
+        ) => void | Value<T> | Promise<Value<T>>;
+        onUpdate?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
+        onRender?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
+        onUnMount?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
         onError?: (
             error: any,
-            prev: Value<T>, 
-            get: Getter<T>, 
+            prev: Value<T>,
+            get: Getter<T>,
             set: Setter
         ) => void;
     };

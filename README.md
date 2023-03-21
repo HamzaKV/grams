@@ -22,6 +22,7 @@ Benefits:
 - Protected state
 - Effect handling
 - Structural
+- No race conditions
 
 ### Supported Frameworks
 - React (>=16.8.0)
@@ -261,3 +262,4 @@ const Component = () => {
     }
   );
   ```
+- It could take time to setup the store. The store is created sequentially (one gram at a time) and if there are many grams defined, it could add overhead time.

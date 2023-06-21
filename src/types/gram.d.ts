@@ -20,16 +20,19 @@ export type GramAction<T> = (
     prev: Value<T>,
     newValue: Value<T>,
     defaultValue: Value<T>,
-    get: Getter<T>,
+    get: Getter<unknown>,
     set: Setter
 ) => Value<T> | Promise<Value<T>>;
 
-export type GramProduce<T> = (value: Value<T>, get: Getter<T>) => Value<T>;
+export type GramProduce<T> = (
+    value: Value<T>,
+    get: Getter<unknown>
+) => Value<T>;
 
 export type GramMiddleware<T> = (
     prev: Value<T>,
     newValue: Value<T>,
-    get: Getter<T>,
+    get: Getter<unknown>,
     set: Setter
 ) => boolean;
 
@@ -50,16 +53,16 @@ export type Gram<T> = {
     effects?: {
         onMount?: (
             prev: Value<T>,
-            get: Getter<T>,
+            get: Getter<unknown>,
             set: Setter
         ) => void | Value<T> | Promise<Value<T>>;
-        onUpdate?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
-        onRender?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
-        onUnMount?: (prev: Value<T>, get: Getter<T>, set: Setter) => void;
+        onUpdate?: (prev: Value<T>, get: Getter<unknown>, set: Setter) => void;
+        onRender?: (prev: Value<T>, get: Getter<unknown>, set: Setter) => void;
+        onUnMount?: (prev: Value<T>, get: Getter<unknown>, set: Setter) => void;
         onError?: (
             error: any,
             prev: Value<T>,
-            get: Getter<T>,
+            get: Getter<unknown>,
             set: Setter
         ) => void;
     };

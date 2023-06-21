@@ -48,7 +48,7 @@ export type Gram<T> = {
         [key: string]: GramAction<T>;
     };
     produce?: {
-        [key: string]: GramProduce<T>;
+        [key: string]: GramProduce<unknown>;
     };
     effects?: {
         onMount?: (

@@ -8,8 +8,6 @@
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ## Granular ReActive Management of State
 
-*Experimental*
-
 ## Description
 A robust, granular, and well defined state management compatible with SOLID principles. A state manager that is reliable and consistent.
 

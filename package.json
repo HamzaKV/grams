@@ -1,6 +1,6 @@
 {
   "name": "grams",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Granular ReActive Management of State",
   "main": "index.js",
   "repository": "https://github.com/HamzaKV/grams.git",
@@ -19,10 +19,10 @@
     "major": "yarn git:main && yarn version --major && yarn git:push:main",
     "lint": "eslint .",
     "lint:fix": "eslint --fix --ext .ts .",
-    "roll": "yarn test && yarn build && cd dist && yarn publish",
-    "roll:patch": "yarn test && yarn patch && yarn roll",
-    "roll:minor": "yarn test && yarn minor && yarn roll",
-    "roll:major": "yarn test && yarn major && yarn roll",
+    "roll": "yarn build && cd dist && yarn publish",
+    "roll:patch": "yarn patch && yarn roll",
+    "roll:minor": "yarn minor && yarn roll",
+    "roll:major": "yarn major && yarn roll",
     "test": "jest"
   },
   "dependencies": {

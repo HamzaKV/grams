@@ -19,8 +19,7 @@ Benefits:
 - Middleware compatibility
 - Protected state
 - Effect handling
-- Structural
-- No race conditions
+- Structural state management
 
 ### Supported Frameworks
 - React (>=16.8.0)
@@ -34,77 +33,96 @@ or
 
 `npm install grams`
 
+or
+
+`pnpm install grams`
+
+or
+
+`bun install grams`
+
 ## Definitions
-Gram
+#### Gram
 | Name | Description | Required | Type |
 | --- | ----------- | -------- | ---- |
 | defaultValue | Default initial value of state | Y | any |
-| type | Type of state value | Y | "string" \| "number" \| "boolean" \| "object" |
+| type | Type of state value | Y | "string" \| "number" \| "boolean" \| "object" \| "other" |
 | stateType | Type of State | N | "stateful" \| "stateic" |
 | produce | Modifications or mutations of state | N | - |
 | actions | Actions to execute (can be promises) | N | - |
 | effects | Various effects (hooks) that run based on lifecycle | N | - |
 | middleware | Functions that execute before a state change | N | - |
 
-State Types
+#### State Types
 | Name | Description |
 | ---- | ----------- |
 | stateful | A type of state that will cause a rerender |
 | stateic | A type of state that will not cause a rerender (useful for static variables) |
 
-Effects
+#### Effects
 | Name | Description |
 | ---- | ----------- |
 | onMount | Runs after the state has been initialized. (Can be a promise and can modify the state on return) |
 | onUpdate | Runs after the state has been updated. Cannot modify state directly. |
 | onRender | Runs after the subscribed components have been rerendered. Cannot modify state directly. |
-| onUnMount | Runs after the state has been unmounted. Cannot modify state directly. |
+| onListenerSubscribed | Runs after a listener is subscribed. Cannot modify state directly. |
+| onListenerUnSubscribed | Runs after a listener is unsubscribed. Cannot modify state directly. |
 | onError | Runs if the state has failed. Cannot modify state directly. |
+
+#### Internal Functions
+| Name | Description |
+| ---- | ----------- |
+| subscribe | A function that subscribes a listener to the state. (Components or functions can be subscribed.) |
+| getState | A function that returns the current state. |
+| setState | A function that sets the state and will execute all listeners. (Functions that are registered will rerender.) |
+| getStateProduce | A function that returns a subset of the state. |
+| action | A function that executes an action. (Can be used to execute actions without the need of hooks. Functions that are registered will rerender.) |
 
 ## Specifications
 
 ### useStore
-`useStore(key: string | ((stateKeys: StateKeys) => string)) => [state, setState]`
+`useStore() => [state, setState]`
 
-A hook that accepts the key of the state, subscribes the component to the state, and returns the value of the state as well as its setter function. (Works similar to `useState` found in React hooks).
+A hook that subscribes the component to the state, and returns the value of the state as well as its setter function. (Works similar to `useState` found in React hooks).
 
 ### useStoreValue
-`useStoreValue(key: string | ((stateKeys: StateKeys) => string)) => state`
+`useStoreValue() => state`
 
-A hook that accepts the key of the state, subscribes the component to the state and __only__ returns its value.
+A hook that subscribes the component to the state and __only__ returns its value.
 
 ### useSetStore
-`useSetStore(key: string | ((stateKeys: StateKeys) => string)) => setState`
+`useSetStore() => setState`
 
-A hook that accepts the key of the state and returns its setter function. *It does __not__ subscribe the component to the state.*
+A hook that returns its setter function. *It does __not__ subscribe the component to the state.*
 
 ### useStoreProduce
-`useStoreProduce(produceName: string | ((stateKeys: StateKeys) => string), key: string | ((stateKeys: StateKeys) => string)) => state`
+`useStoreProduce(produceName: string) => state`
 
-A hook that accepts the name of the produce, the key of the state, subscribes the component to the state, and returns its mutated value.
+A hook that accepts the name of the produce, subscribes the component to the produce (subset) of the state, and returns its mutated value.
 
-### useStoreActions
-`useStoreActions(actionName: string | ((stateKeys: StateKeys) => string), key: string | ((stateKeys: StateKeys) => string)) => setState`
+### useStoreAction
+`useStoreAction(actionName: string) => setState`
 
-A hook that accepts the name of the action, the key of the state, and returns its action function. *It does __not__ subscribe the component to the state.*
+A hook that accepts the name of the action, and returns its action function. *It does __not__ subscribe the component to the state.*
 
-## Usage
-### 1. Add the Provider to the root component
-```js
-...
-
-import { Provider } from "grams";
-
-...
-
-root.render(
-    <Provider>
-      <App />
-    </Provider>
-);
+### internal
 ```
 
-### 2. Define the State
+{
+    subscribe: (listener) => () => void;
+    getState: () => state;
+    setState: (newValue | ((prev) => newValue)) => void;
+    getStateProduce: (key: string) => value;
+    action: (key: string) => (newValue) => void;
+}
+
+```
+
+State internal actions that can be used to manipulate the state without the need of hooks. These can be used to create custom hooks or actions or to run in instances where hooks cannot be used (i.e. query (fetch) functions, side effects etc).
+
+## Usage
+
+### 1. Define the State
 ```js
 ...
 
@@ -116,75 +134,54 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 ...
 
-export const isAuthenticated = gram(
-  false,
-  "boolean",
-  "stateful",
-  {
-    isUnAuthenticated: (currValue) => !currValue
+export const isAuthenticated = gram({
+  defaultValue: false,
+  type: "boolean",
+  stateType: "stateful",
+  produce: {
+    isUnAuthenticated: (currValue) => !currValue,
   },
-  {
+  actions: {
     login: () => true,
-    logout: () => false
+    logout: () => false,
   },
-  {
-    onMount: async (_, __, set) => {
-      set(true, (storeKeys) => storeKeys.isLoading.key);
+  effects: {
+    onMount: async () => {
+      isLoading.internal.setState(true);
       await delay(1000);
-      set(false, "isLoading");
+      isLoading.internal.setState(false);
       return true;
-    }
+    },
   },
-  {
+  middleware: {
     check: () => {
       console.log("auth middleware");
       return true;
-    }
-  }
-);
+    },
+  },
+});
 ```
 
-### 3. Pass the State to the Provider
+### 2. Subscribe to the State or use the Actions
 ```js
 ...
 
-import { Provider } from "grams";
-
-...
-
-root.render(
-    <Provider models={{ isAuthenticated, isLoading }}>
-      <App />
-    </Provider>
-);
-```
-
-### 4. Subscribe to the State or use the Actions
-```js
-...
-
-import { useStoreActions, useStoreValue, useStoreProduce } from "grams";
+import { isAuthenticated } from "./store";
 
 ...
 
 const ActionComponent = () => {
-  const login = useStoreActions("login", "isAuthenticated");
+  const action = isAuthenticated.useStoreAction("logout");
 
-  return (
-    <button
-      onClick={() => {
-        login();
-      }}
-    >
-      Login
-    </button>
-  );
+  return <button onClick={action}>
+    Logout
+  </button>;
 };
 
 ...
 
 const ProduceComponent = () => {
-  const isUnAuthenticated = useStoreProduce("isUnAuthenticated", "isAuthenticated");
+  const isUnAuthenticated = isAuthenticated.useStoreProduce("isUnAuthenticated");
 
   return (
     <h1>Is Unauthenticated: {String(isUnAuthenticated)}</h1>
@@ -194,23 +191,23 @@ const ProduceComponent = () => {
 ...
 
 const ValueComponent = () => {
-  const isAuthenticated = useStoreValue((storeKeys) => storeKeys.isAuthenticated.key);
+  const isAuth = isAuthenticated.useStoreValue();
 
   return (
-    <h1>Is Authenticated: {String(isAuthenticated)}</h1>
+    <h1>Is Authenticated: {String(isAuth)}</h1>
   );
 };
 
 ...
 
 const Component = () => {
-  const [isAuthenticated, setIsAuthenticated] = useStore((storeKeys) => storeKeys.isAuthenticated.key);
+  const [isAuth, setIsAuth] = isAuthenticated.useStore();
 
   return (
     <div>
-      <h1>Is Authenticated: {String(isAuthenticated)}</h1>
+      <h1>Is Authenticated: {String(isAuth)}</h1>
       <button
-        onClick={() => setIsAuthenticated(true)}
+        onClick={() => setIsAuth(true)}
       >
         Login
       </button>
@@ -220,44 +217,19 @@ const Component = () => {
 ```
 
 ## Caveats
-- In `StrictMode`, the store does not function well due to limitations. For further information regarding `StrictMode`, visit [React Docs](https://reactjs.org/docs/strict-mode.html).
-  - To avoid this, the recommended approach is to add the `Provider` above `StrictMode`:
-  ```js
-  root.render(
-    <Provider models={{ isAuthenticated, isLoading }}>
-      <StrictMode>
-          <App />
-      </StrictMode>
-    </Provider>
-  );
-  ```
 - Poor management, could lead to infinite state cycles - example listed below.
   ```js
-  const isAuthenticated = gram(
-    false,
-    "boolean",
-    "stateful",
-    {
-      isUnAuthenticated: (currValue) => !currValue
-    },
-    {
-      login: () => true,
-      logout: () => false
-    },
-    {
-      onMount: async (_, __, set) => {
-        set(true, (storeKeys) => storeKeys.isAuthenticated.key);
-        await delay(1000);
-        set(false, (storeKeys) => storeKeys.isAuthenticated.key);
-        return true;
+  const isAuthenticated = gram({
+    defaultValue: false,
+    type: "boolean",
+    stateType: "stateful",
+    ...
+    effects: {
+      ...
+      onUpdate: async () => {
+        isAuthenticated.internal.setState(true);
       }
     },
-    {
-      check: () => {
-        console.log("auth middleware");
-        return true;
-      }
-    }
-  );
+    ...
+  });
   ```
-- It could take time to setup the store. The store is created sequentially (one gram at a time) and if there are many grams defined, it could add overhead time.

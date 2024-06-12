@@ -4,6 +4,7 @@ export const supportedTypes = {
     number: 'number',
     boolean: 'boolean',
     object: 'object',
+    other: 'other', // for file, buffer, node etc. types
     // granular: 'granular',
 } as const;
 
@@ -11,5 +12,3 @@ export const supportedStateTypes = {
     stateful: 'stateful',
     stateic: 'stateic',
 } as const;
-
-export const propDenote = ':prop:';

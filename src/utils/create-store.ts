@@ -104,6 +104,7 @@ const gram = <T, P extends Produce<T>, A extends Actions<T>>(
                     if (!actions) {
                         throw new Error('No actions defined');
                     }
+                    // @ts-expect-error - key is in actions
                     const fn = actions[key];
                     if (!fn) {
                         throw new Error(`No action with ${String(key)} is defined`);
@@ -112,7 +113,6 @@ const gram = <T, P extends Produce<T>, A extends Actions<T>>(
                     if (result instanceof Promise) {
                         result
                             .then((value) => {
-                                // @ts-expect-error - update allows partial values
                                 update(value);
                                 emitChange();
                             })
@@ -121,7 +121,6 @@ const gram = <T, P extends Produce<T>, A extends Actions<T>>(
                                     effects.onError(err, state);
                             });
                     } else {
-                        // @ts-expect-error - update allows partial values
                         update(result);
                         emitChange();
                     }
